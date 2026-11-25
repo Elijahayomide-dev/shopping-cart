@@ -1,0 +1,295 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Mini Shopping Cart</title>
+    <style>
+        /* Base & Reset */
+:root {
+    --bg-canvas: #f4f3ef;
+    --bg-card: #ffffff;
+    --bg-subtle: #f9f8f6;
+    --text-primary: #18181b;
+    --text-secondary: #71717a;
+    --border-color: #e4e4e7;
+    --accent: #18181b;
+    --accent-hover: #27272a;
+    --danger-hover: #fef2f2;
+    --danger-text: #dc2626;
+    --radius-lg: 16px;
+    --radius-md: 10px;
+    --radius-sm: 6px;
+}
+
+* {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+}
+
+body {
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+    background-color: var(--bg-canvas);
+    color: var(--text-primary);
+    min-height: 100vh;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 1.5rem;
+    line-height: 1.5;
+}
+
+/* Main Container */
+.app-shell {
+    width: 100%;
+    max-width: 480px;
+}
+
+.cart-card {
+    background: var(--bg-card);
+    border: 1px solid var(--border-color);
+    border-radius: var(--radius-lg);
+    padding: 2rem;
+    box-shadow: 0 10px 30px -10px rgba(0, 0, 0, 0.06);
+}
+
+/* Header */
+.card-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    padding-bottom: 1.5rem;
+    border-bottom: 1px solid var(--border-color);
+    margin-bottom: 1.5rem;
+}
+
+.eyebrow {
+    font-size: 0.72rem;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    color: var(--text-secondary);
+    margin-bottom: 0.25rem;
+}
+
+#cart-title {
+    font-size: 1.5rem;
+    font-weight: 700;
+    letter-spacing: -0.02em;
+}
+
+.edition {
+    font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
+    font-size: 0.8rem;
+    color: var(--text-secondary);
+    background: var(--bg-subtle);
+    padding: 0.25rem 0.6rem;
+    border-radius: var(--radius-sm);
+    border: 1px solid var(--border-color);
+}
+
+/* Input Section */
+.input-section {
+    margin-bottom: 1.25rem;
+}
+
+.input-section label {
+    display: block;
+    font-size: 0.85rem;
+    font-weight: 600;
+    margin-bottom: 0.5rem;
+}
+
+.input-row {
+    display: flex;
+    gap: 0.5rem;
+}
+
+input[type="text"] {
+    flex: 1;
+    padding: 0.65rem 0.9rem;
+    font-size: 0.95rem;
+    border: 1px solid var(--border-color);
+    border-radius: var(--radius-md);
+    background: var(--bg-subtle);
+    color: var(--text-primary);
+    transition: border-color 0.15s ease, background-color 0.15s ease;
+}
+
+input[type="text"]:focus {
+    outline: none;
+    border-color: var(--accent);
+    background: var(--bg-card);
+}
+
+/* Buttons */
+.button {
+    font-family: inherit;
+    font-size: 0.85rem;
+    font-weight: 600;
+    padding: 0.65rem 1.1rem;
+    border-radius: var(--radius-md);
+    border: 1px solid transparent;
+    cursor: pointer;
+    transition: all 0.15s ease;
+}
+
+.button:active {
+    transform: scale(0.98);
+}
+
+.button-primary {
+    background: var(--accent);
+    color: #ffffff;
+}
+
+.button-primary:hover {
+    background: var(--accent-hover);
+}
+
+.actions {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.5rem;
+    margin-bottom: 1.75rem;
+}
+
+.button-secondary {
+    background: var(--bg-subtle);
+    color: var(--text-primary);
+    border-color: var(--border-color);
+    font-size: 0.78rem;
+    padding: 0.45rem 0.75rem;
+    flex: 1 1 auto;
+}
+
+.button-secondary:hover {
+    background: #eeeeec;
+}
+
+/* Subtle danger tint on "Clear all" */
+.button-secondary:first-child:hover {
+    background: var(--danger-hover);
+    color: var(--danger-text);
+    border-color: #fecaca;
+}
+
+/* Cart List Display */
+.cart-list {
+    background: var(--bg-subtle);
+    border: 1px solid var(--border-color);
+    border-radius: var(--radius-md);
+    padding: 1rem;
+}
+
+.list-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    font-size: 0.78rem;
+    font-weight: 600;
+    color: var(--text-secondary);
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    padding-bottom: 0.75rem;
+    border-bottom: 1px solid var(--border-color);
+    margin-bottom: 0.75rem;
+}
+
+#displayArea {
+    min-height: 90px;
+    font-size: 0.95rem;
+    color: var(--text-secondary);
+}
+
+/* Rendered Cart Items (used by script.js) */
+.cart-items {
+    list-style: none;
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+}
+
+.cart-item {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    background: var(--bg-card);
+    padding: 0.6rem 0.85rem;
+    border-radius: var(--radius-sm);
+    border: 1px solid var(--border-color);
+    color: var(--text-primary);
+    font-weight: 500;
+}
+
+.item-index {
+    font-family: ui-monospace, SFMono-Regular, monospace;
+    font-size: 0.75rem;
+    color: var(--text-secondary);
+}
+
+    </style>
+</head>
+<body>
+       <main class="app-shell">
+        <section class="cart-card" aria-labelledby="cart-title">
+            <header class="card-header">
+                <div>
+                    <p class="eyebrow">Array workspace</p>
+                    <h2 id="cart-title">Mini shopping cart</h2>
+                </div>
+                <p class="edition">No. 01</p>
+            </header>
+
+            <div class="input-section">
+                <label for="userInput">Add an item</label>
+                <div class="input-row">
+                    <input type="text" placeholder="Enter an item name" id="userInput" autocomplete="off">
+                    <button class="button button-primary" type="button" onclick="addItem()">
+                        Add
+                    </button>
+                </div>
+            </div>
+
+            <div class="actions" aria-label="Cart actions">
+                <button class="button button-secondary" type="button" onclick="deleteAllItem()">Clear all</button>
+                <button class="button button-secondary" type="button" onclick="deleteFirstItem()">Remove first</button>
+                <button class="button button-secondary" type="button" onclick="deleteLastItem()">Remove last</button>
+                <button class="button button-secondary" type="button" onclick="addToFirstItem()">Add to first</button>
+                <button class="button button-secondary" type="button" onclick="addToLastItem()">Add to last</button>
+            </div>
+
+            <section class="cart-list" aria-label="Shopping cart items">
+                <div class="list-header">
+                    <span>Items</span>
+                    <span class="list-mark">Current list</span>
+                </div>
+                <div id="displayArea" aria-live="polite">Your items will show here</div>
+            </section>
+        </section>
+    </main>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+    
+
+
+
+
+
+
+    <script src="script.js"></script>
+</body>
+</html>
